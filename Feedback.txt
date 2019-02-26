@@ -56,6 +56,6 @@ I'm wondering if your HW was incomplete because of unfamiliarity with GitHub? Yo
 looks like you made an initial commit of your "work in progress" and then never committed/pushed subsequent
 changes. If this is the case, I'm happy to help you get familiar with how GitHub works. 
 
-  
+* Also, please make separate HW1, HW2,etc. subfolders.  
 
 
