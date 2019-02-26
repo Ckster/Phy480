@@ -1,0 +1,61 @@
+# HW grading scale: check(+) --> excellent (good code and analysis) 
+#                   check    --> satisfactory (minor shortcomings in code and/or analysis)
+#                   check(-) --> significant problems w/code or analysis
+
+
+1) Problem 1 (area.cpp embellishments): 
+
+* Your code looks ok, though 1 minor nitpick is that the area function is a little  
+counterintuitive since you pass in the radius squared. (Better to write functions
+where it's clear as possible what's being computed.)
+
+
+2)Problem 2 (sum up/down): 
+
+* Two minor nitpicks: 1) Always include a makefile or explicit instructions for compiling/building
+the code, and 2)  It's a good idea to use a filename that hints at what the code 
+actually does (e.g., order_of_summation.cpp). I know both of these are hard to get worked up about
+for such a simple code, but it's good practice for when you start building more complicated projects.
+
+* Where's the sum over N to generate the data used in the plot?
+* As mentioned in class, you need to go to rather high N (~10**7) to see the full pattern. With such
+a large number, it's best to loop over the different N in logarithmic intervals (see the problem
+hint on the webpage.)
+* Where's the analysis of which method is better and why?
+ 
+3) Problem 3 (bessel functions): 
+
+* Same comments as above re: makefile/build instructions and the lack of analysis for the plot.  
+
+For instance, at small x and large x, the relative
+difference is of order 1. Can you identify which one (if any) is most accurate 
+in these regions? Ditto for the region where the relative difference is around machine precision? 
+Would the gsl results be of any help here?
+
+Both for this and the previous problem, you might find the discussion in the Ch. 4 notes
+about to be useful. There we discuss how the relative difference 
+for 2 approximations is a useful tool even if we don't know the "exact" result. 
+
+
+4) Extra problem
+
+* You started it and your code looks ok (though you probably want a larger number of data points, 
+I'd say 10,000 or so should do it.) That said, the plot of the error vs. trial number looks like
+it has a bit too much structure (i.e., these should "look" more random to the naked eye.) This might
+be due to not enough samples, or also because there's not enough precision in your output (better
+to use scientific format for output here).
+
+* Generally, anytime you make a figure you should include the gnuplot plt file so I can reproduce it easily.
+
+* To really answer if these are randomly distributed, you need to bin up the results and make a histogram
+to see if if approaches a gaussian distribution (central limit and all that).
+
+##### HW grade = check(-) 
+
+I'm wondering if your HW was incomplete because of unfamiliarity with GitHub? Your repo (and several others) 
+looks like you made an initial commit of your "work in progress" and then never committed/pushed subsequent
+changes. If this is the case, I'm happy to help you get familiar with how GitHub works. 
+
+  
+
+
