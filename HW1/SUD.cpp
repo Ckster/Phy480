@@ -1,3 +1,8 @@
+//Compile using g++ -o SUD.x SUC.cpp
+//
+
+
+
 #include <iostream>	     // this has the cout, cin definitions
 #include <iomanip>
 using namespace std;     // if omitted, then need std::cout, std::cin
@@ -10,7 +15,8 @@ int main()
   float diff;
   float sum_up = 0;  // set the initial sum to zero
   float sum_down = 0;
-  cout << "Enter N; the number of iterations: ";	// ask for N
+  //INPUT FOR N SHOULD BE LARGE ~10^7
+  cout << "Enter N; the number of iterations: ";
   cin >> N;
   ofstream sum_out ("sum_out.dat");	// save data in sum_out.dat
   sum_out << "#  N   Sum Up  Sum Down Difference " << endl;
