@@ -1,0 +1,19 @@
+
+# Grading Scale: check(+) --> excellent codes and analysis
+                 check    --> satisfactory (missing small gaps in analysis or codes)
+                 check(-) --> unsatisfactory (significant problems with codes/analysis or incomplete)  
+
+The Milne results look slightly strange-- can you guess why? (Hint: the error shouldn't go as N^-8 as you say in your analysis.) 
+Your analysis is also missing the 2nd part of part c where you mimick the discussion in the notes and make a quantitative or analytic
+estimate of the optimal N (as opposed to picking it off from the graphs).
+
+There are 2 possibilities that you should investigate to resolve the slightly strange Milne result
+
+1) The Milne algorithm might simply be coded incorrectly
+2) I noticed your code is mixing floats and doubles all over the place, which is dangerous since you're 
+mixing different precisions. Make sure you're using all doubles.
+
+  
+Grade: check(-)
+
+
