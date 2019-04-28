@@ -1,12 +1,17 @@
 ///////////////////SLOPE-ANALYSIS////////////////////////////
-// THE SLOPE OF THE LOG-LOG PLOT FOR SIMPSONS IS -3.99 WHEN FITTED FROM .5-1.3. THIS MEANS
+// THE SLOPE OF THE LOG-LOG PLOT FOR SIMPSONS IS -3.99 WHEN FITTED FROM .5-2.75. THIS MEANS
 //THAT IN THIS REGION THE ERROR SCALES LIKE ~ 1/N^4, AS IT SHOULD. BY LOOKING AT THE GRAPH
-//THE MAX OPTIMAL NUMBER OF ITERATIONS SHOULD BE ~ 12.
+//THE MAX OPTIMAL NUMBER OF ITERATIONS SHOULD BE ~ 200.
 
-//THE SLOPE OF THE LOG-LOG PLOT FOR MILNE IS -8.6 WHEN FITTED FROM 0-1.3. THIS MEANS
-// THAT IN THIS REGION THE ERROR SCALES AS 1/N^8.6, AND IT SHOULD SCALE AS 1/N^8. HONING
-// IN FURTHER ON THE CORRECT REGION COULD MAKE THIS CLOSER TO 8. BY LOOKING AT THE GRAPH THE
-// OPTIMAL NUMBER OF ITERATIONS SHOULD BE ~ 4. AFTER THIS THE ERROR OSCILLATES RANDOMLY, BUT IS LOW.
+//THE SLOPE OF THE LOG-LOG PLOT FOR MILNE IS -6.26 WHEN FITTED FROM 1.25-1.9. THIS MEANS
+// THAT IN THIS REGION THE ERROR SCALES AS 1/N^6.26, AND IT SHOULD SCALE AS 1/N^6. HONING
+// IN FURTHER ON THE CORRECT REGION COULD MAKE THIS CLOSER TO 6. BY LOOKING AT THE GRAPH THE
+// OPTIMAL NUMBER OF ITERATIONS SHOULD BE ~ 35.
+
+//For both Milne and Simpson N best should be approximately equal to 1/(em)^(2/13) and
+//1/(em)^(2/9). The machine precision is around 10^-10, which leads to optimal N values
+// of ~33 and ~170, which is what is expected from the plots. 
+
 
 
 
@@ -19,7 +24,7 @@ using namespace std;
 
 #include "integ_hw2_routines.h"	// integration routines for Gauss and Milne
 
-float my_integrand (float x);
+double my_integrand (double x);
 const double answer = 2.2955871493926;  //Answer to integral sqrt(1+x^2)
 
 int
@@ -46,7 +51,7 @@ main ()
   {
     integ_out_Simpsons << setw(4) << log10(i);
     result = simpsons_rule (i, lower, upper, &my_integrand);
-    integ_out_Simpsons << "  " << setprecision(10) << log10(fabs (((result - answer)/answer)));
+    integ_out_Simpsons << "  " << setprecision(16) << log10(fabs (((result - answer)/answer)));
     //output relative error of the integration for Simpsons Rule
     integ_out_Simpsons<<endl;
   }
@@ -57,7 +62,7 @@ main ()
 
 
     result = milne_rule (i, lower, upper, &my_integrand);
-    integ_out_milne << "  " << setprecision(10) << log10(fabs (((result - answer)/answer)));
+    integ_out_milne << "  " << setprecision(16) << log10(fabs (((result - answer)/answer)));
     //output relative error of the integration for Milne Rule
 
 
@@ -68,7 +73,7 @@ main ()
     {
     integ_out_GK21 << setw(4) << log10(i);
     result = my_gsl_rule(i);
-    integ_out_GK21 << "  " << setprecision(10) << log10(fabs (((result - answer)/answer)));
+    integ_out_GK21 << "  " << setprecision(16) << log10(fabs (((result - answer)/answer)));
     //output relative error of the integration for Gauss_Kronrod 21 point
     integ_out_GK21 << endl;
   }
@@ -89,8 +94,8 @@ main ()
 //************************************************************************
 
 // the function we want to integrate
-float
-my_integrand (float x)
+double
+my_integrand (double x)
 {
   return (sqrt(1+(x*x)));
 }

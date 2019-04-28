@@ -2,22 +2,22 @@
 #include "integ_hw2_routines.h"   // integration routine simspson and Milne
 #include "gsl/gsl_integration.h" // gsl integration routines
 double my_gsl_integrand (double x, void *params_ptr);
-double simpsons_rule ( int num_pts, float x_min, float x_max,
-                      float (*integrand) (float x) )
+double simpsons_rule ( int num_pts, double x_min, double x_max,
+                      double (*integrand) (double x) )
 
 
 {
-   double interval = ((x_max - x_min)/float(num_pts - 1));  // called h in notes
+   double interval = ((x_max - x_min)/double(num_pts - 1));  // called h in notes
    double sum=  0.;  // initialize integration sum to zero
 
    for (int n=2; n<num_pts; n+=2)                // loop for odd points
    {
-     double x = x_min + interval * float(n-1);
+     double x = x_min + interval * double(n-1);
      sum += (4./3.)*interval * integrand(x);
    }
    for (int n=3; n<num_pts; n+=2)                // loop for even points
    {
-      double x = x_min + interval * float(n-1);
+      double x = x_min + interval * double(n-1);
      sum += (2./3.)*interval * integrand(x);
    }
    // add in the endpoint contributions
@@ -25,26 +25,26 @@ double simpsons_rule ( int num_pts, float x_min, float x_max,
 
    return (sum);
 }
-double milne_rule (int num_pts, float x_min, float x_max,
-                      float (*integrand) (float x))
+double milne_rule (int num_pts, double x_min, double x_max,
+                      double (*integrand) (double x))
 {
 
-  double interval = ((x_max - x_min)/float(num_pts - 1));  // called h in notes
+  double interval = ((x_max - x_min)/double(num_pts - 1));  // called h in notes
   double sum=  0.;  // initialize integration sum to zero
 
   for (int n=2; n<num_pts; n+=2)                // loop for odd points
   {
-    double x = x_min + interval * float(n-1);
+    double x = x_min + interval * double(n-1);
     sum += (64./45.)*interval * integrand(x);
   }
   for (int n=3; n<num_pts; n+=4)                // loop for first set of even points
   {
-     double x = x_min + interval * float(n-1);
+     double x = x_min + interval * double(n-1);
     sum += (24./45.)*interval * integrand(x);
   }
   for (int n=5; n<num_pts; n+=4)                // loop for second set of even points
   {
-     double x = x_min + interval * float(n-1);
+     double x = x_min + interval * double(n-1);
     sum += (28./45.)*interval * integrand(x);
   }
   // add in the endpoint contributions
