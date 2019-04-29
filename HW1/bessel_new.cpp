@@ -1,4 +1,7 @@
-
+//When the error is close to one it means the difference of values in up
+//and down is large. When X is near 10 they are both seen to be accurate, the
+//error is small. From x=1 to x=10, there is a power law and for x>50 the upward
+//method is better. 
 
 
 
