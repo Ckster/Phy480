@@ -1,0 +1,16 @@
+Grades:  check(-) :  some major problems with the codes and/or analysis
+         check    :  good (with some minor gaps in your results/analysis) 
+         check(+) :  excellent 
+         check(++) : excellent with one of the BONUS problems completed
+
+Problem 2 looks good. 
+
+Problem 3 has some major problems. Looking at your code,
+it looks like you're just printing out Harmonic Oscillator wavefunctions (i.e.,
+you're not reconstructing the coulomb or square well ground state w.f. as the 
+problem asks.) So there seems to be a conceptual misunderstanding of what you're
+supposed to be calculating and plotting (Hint: you're supposed to use 
+the eigen_basis code to construct eq. 5.22 in the Ch. 5 notes)
+
+Grade: Check(-) 
+
