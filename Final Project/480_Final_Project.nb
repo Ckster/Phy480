@@ -1,0 +1,1445 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     67227,       1437]
+NotebookOptionsPosition[     66563,       1417]
+NotebookOutlinePosition[     66941,       1434]
+CellTagsIndexPosition[     66898,       1431]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{" ", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "This", " ", "notebook", " ", "solves", " ", "and", " ", "then", " ", 
+      "visualizes", " ", "the", " ", "solution", " ", "to", " ", "the", " ", 
+      "Eueler"}], "-", 
+     RowBox[{
+     "Lagrange", " ", "equations", " ", "for", " ", "a", " ", "system", " ", 
+      "of", " ", "a", " ", "charges", " ", "spherical", " ", "pendulum", "  ",
+       "with", " ", "three", " ", "charges", " ", "placed", " ", "beneath", 
+      " ", "it", " ", "in", " ", "a", " ", 
+      RowBox[{"plane", ".", " ", "All"}], " ", "of", " ", "the", " ", 
+      "paramaters", " ", "and", " ", "initial", " ", "conditions", " ", "can",
+       " ", "be", " ", "changed", " ", "by", " ", "using", " ", "the", " ", 
+      RowBox[{"widget", ".", " ", "The"}], " ", "output", " ", "of", " ", 
+      "the", " ", "widget", " ", "is", " ", "an", " ", "animation", " ", "of",
+       " ", "the", " ", "motion", " ", "of", " ", "the", " ", "pendulum", " ",
+       "in", " ", "the", " ", "current", " ", "state", " ", "of", " ", "the", 
+      " ", 
+      RowBox[{"system", ".", " ", "Phase"}], " ", "portraits", " ", "of", " ",
+       "the", " ", "polar", " ", "and", " ", "azimuthal", " ", "directions", 
+      " ", "of", " ", "motion", " ", "are", " ", "also", " ", "added", " ", 
+      "to", " ", "the", " ", "output"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+      "as", " ", "well", " ", "as", " ", "a", " ", "plot", " ", "of", " ", 
+       "the", " ", "total", " ", "energy", " ", "of", " ", "the", " ", 
+       RowBox[{"system", ".", " ", "In"}], " ", "order", " ", "to", " ", 
+       "run", " ", "either", " ", "go", " ", "to", " ", "Evaluate"}], 
+      "\[Rule]", 
+      RowBox[{
+       RowBox[{"Cells", " ", "or", " ", "use", " ", "Shift"}], "+", 
+       RowBox[{
+        RowBox[{"Enter", ".", " ", "If"}], " ", "you", " ", "would", " ", 
+        "like", " ", "to", " ", 
+        RowBox[{"silent", "/", "unsilent"}], " ", "just", " ", "use", " ", 
+        "a"}]}]}], " ", ";"}], ",", " ", 
+    RowBox[{"or", " ", "take", " ", "one", " ", 
+     RowBox[{
+     "away", ".", " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      "Initially"}], " ", "I", " ", "wrote", " ", "this", " ", "in", " ", 
+     "python", " ", "using", " ", 
+     RowBox[{"Scipy", "'"}], "s", " ", "new", " ", "ODEint", " ", "package"}],
+     ",", " ", 
+    RowBox[{
+    "but", " ", "it", " ", "couldnt", " ", "handle", " ", "the", " ", 
+     "stiffness", " ", "of", " ", "the", " ", "system", " ", "at", " ", 
+     "some", " ", "points", " ", "and", " ", "also", " ", "as", " ", "a", " ",
+      "small", " ", "bonus", " ", 
+     RowBox[{"Mathematica", "'"}], "s", " ", "NDSolve", " ", "allows", " ", 
+     "you", " ", "to", " ", "solve", " ", "second", " ", "order", " ", "ODEs",
+      " ", "where", " ", "as", " ", "ODEint", " ", "you", " ", "have", " ", 
+     "to", " ", "make", " ", "them", " ", "a", " ", "system", " ", "of", " ", 
+     "coupled", " ", "first", " ", "order", " ", 
+     RowBox[{"equations", ".", " ", "The"}], " ", "workhorse", " ", "of", " ",
+      "this", " ", "code", " ", "is", " ", "Mathematicas", " ", "NDSolve"}], 
+    ",", " ", 
+    RowBox[{
+     RowBox[{
+     "which", " ", "is", " ", "the", " ", "the", " ", "umbrella", " ", 
+      "package", " ", "for", " ", "all", " ", "numerical", " ", "solvers", 
+      " ", "and", " ", "can", " ", "be", " ", "changed", " ", "by", " ", 
+      "the", " ", "Method"}], "\[Rule]", " ", 
+     RowBox[{
+      RowBox[{"argument", ".", " ", "I"}], " ", "chose", " ", "the", " ", 
+      "method", " ", "to", " ", "be", " ", "StiffnessSwitching"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+     "which", " ", "dynamically", " ", "switches", " ", "between", " ", 
+      "methods", " ", "for", " ", "solving", " ", "stiff", " ", "systems", 
+      " ", "and", " ", "non"}], "-", 
+     RowBox[{"stiff", " ", 
+      RowBox[{"systems", ".", " ", "By"}], " ", "default"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+     "it", " ", "uses", " ", "Richardson", " ", "extrapolation", " ", "and", 
+      " ", "dynamically", " ", "chooses", " ", "an", " ", "arbitrarily", " ", 
+      "ordered", " ", 
+      RowBox[{"polynomial", " ", "/", "step"}], " ", "size", " ", "to", " ", 
+      "be", " ", "do", " ", "the", " ", "computation", " ", "for", " ", 
+      "non"}], "-", 
+     RowBox[{"stiff", " ", 
+      RowBox[{"Systems", ".", "  ", "When"}], " ", "the", " ", "system", " ", 
+      "is", " ", "detected", " ", "as", " ", "stiff"}]}], ",", " ", 
+    RowBox[{
+    "implicit", " ", "methods", " ", "are", " ", "used", " ", "in", " ", 
+     "order", " ", "to", " ", "give", " ", "the", " ", 
+     RowBox[{"solution", ".", " ", "Becuase"}], " ", "there", " ", "are", " ",
+      "so", " ", "many", " ", "different", " ", "methods", " ", "being", " ", 
+     "used", " ", "at", " ", "different", " ", "times"}], ",", " ", 
+    RowBox[{
+    "with", " ", "the", " ", "possibilty", " ", "that", "  ", "the", " ", 
+     "order", " ", "and", " ", "step", " ", "size", " ", "of", " ", "the", 
+     " ", "iteration", " ", "are", " ", "always", " ", "different"}], ",", 
+    " ", 
+    RowBox[{
+    "it", " ", "is", " ", "difficult", " ", "to", " ", "analytically", " ", 
+     "discren", " ", "the", " ", "numerical", " ", "error", " ", "in", " ", 
+     "the", " ", 
+     RowBox[{"solution", ".", " ", "After"}], " ", "playing", " ", "around", 
+     " ", "with", " ", "the", " ", "widget", " ", "for", " ", "a", " ", 
+     "little", " ", "bit"}], ",", " ", 
+    RowBox[{
+    "I", " ", "have", " ", "yet", " ", "to", " ", "find", " ", "a", " ", 
+     "traectory", " ", "that", " ", "does", " ", "not", " ", "agree", " ", 
+     "with", " ", "what", " ", "can", " ", "easily", " ", "be", " ", 
+     "suspected", " ", "as", " ", "the", " ", "correct", " ", "motion"}], ",",
+     " ", 
+    RowBox[{
+    "especially", " ", "for", " ", "limiting", " ", "cases", " ", "of", " ", 
+     "certain", " ", 
+     RowBox[{"parameters", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", "\t", 
+   RowBox[{
+    RowBox[{
+    "The", " ", "program", " ", "scales", " ", "just", " ", "fine", " ", 
+     "for", " ", 
+     RowBox[{"long", "/", "short"}], " ", "times"}], ",", " ", 
+    RowBox[{
+    "however", " ", "when", " ", "the", " ", "charges", " ", "are", " ", 
+     "made", " ", "very", " ", "large", " ", 
+     RowBox[{"(", 
+      RowBox[{">", "1000"}], ")"}], " ", "the", " ", "paramatric", " ", 
+     "curve", " ", "becomes", " ", 
+     RowBox[{"unsmooth", ".", " ", "This"}], " ", "could", " ", "possibly", 
+     " ", "be", " ", "an", " ", "issue", " ", "with", " ", "the", " ", 
+     "animation", " ", "package"}], ",", " ", "however", ",", " ", 
+    RowBox[{
+    "becuase", " ", "the", " ", "bob", " ", "from", " ", "what", " ", "I", 
+     " ", "can", " ", "tell", " ", "still", " ", "follows", " ", "a", " ", 
+     "smooth", " ", 
+     RowBox[{"trajctory", ".", " ", "\[IndentingNewLine]", "I"}], " ", 
+     "expected", " ", "the", " ", "total", " ", "energy", " ", "not", " ", 
+     "to", " ", "be", " ", "conserved", " ", "based", " ", "on", " ", "the", 
+     " ", "nature", " ", "of", "  ", "numerical", " ", "solvers", " ", "in", 
+     " ", 
+     RowBox[{"general", ".", " ", "What"}], " ", "is", " ", "nice"}], ",", 
+    " ", "though", ",", " ", 
+    RowBox[{"is", " ", "that", " ", "when", " ", "Cd", " ", 
+     RowBox[{"(", 
+      RowBox[{"the", " ", "air", " ", "drag", " ", "coefficient"}], ")"}], 
+     " ", "is", " ", "turned", " ", "on", " ", "the", " ", "energy", " ", 
+     "will", " ", "approach", " ", "a", " ", "constant", " ", 
+     RowBox[{"value", ".", " ", "In"}], " ", "order", " ", "to", " ", 
+     "conserve", " ", "energy", " ", "I", " ", "would", " ", "need", " ", 
+     "some", " ", "type", " ", "of", " ", "midpoint", " ", "method"}], ",", 
+    " ", 
+    RowBox[{
+    "which", " ", "would", " ", "be", " ", "a", " ", "good", " ", "direction",
+      " ", "for", " ", "how", " ", "this", " ", "project", " ", "could", " ", 
+     "be", " ", "extended", " ", "from", " ", 
+     RowBox[{"here", ".", " ", "All"}], " ", "of", " ", "the", " ", 
+     "packages", " ", "used", " ", "for", " ", 
+     RowBox[{"solving", "/", "visualization"}], " ", "run", " ", "quite", " ",
+      "quickly", " ", "for", " ", "what", " ", "is", " ", "being", " ", 
+     "asked", " ", "of", " ", 
+     RowBox[{"them", ".", " ", "I"}], " ", "havent", " ", "had", " ", "any", 
+     " ", "issues", " ", "with", " ", "massive", " ", 
+     RowBox[{"runtimes", ".", " ", "I"}], " ", "see", " ", "this", " ", 
+     "project", " ", "as", " ", "a", " ", "nice", " ", "example", " ", "of", 
+     " ", "beauty", " ", "and", " ", "simplicity", " ", "of", " ", 
+     "lagrangian", " ", "mechanics"}], ",", " ", 
+    RowBox[{
+    "although", " ", "I", " ", "could", " ", "have", " ", "used", " ", 
+     "Mathematicas", " ", "extremely", " ", "powerful", " ", "vector", " ", 
+     "operation", " ", 
+     RowBox[{"functions", ".", " ", "It"}], " ", "was", " ", "more", " ", 
+     "fun", " ", "to", " ", "do", " ", "it", " ", "this", " ", "way"}], ",", 
+    " ", 
+    RowBox[{"I", " ", 
+     RowBox[{"think", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "Most", " ", "of", " ", "the", " ", "slider", " ", "paramaters", " ", 
+     "are", " ", "easy", " ", "to", " ", "infer", " ", "from", " ", "the", 
+     " ", "name", " ", "or", " ", "just", " ", "playing", " ", "around", " ", 
+     "with", " ", "it", " ", "for", " ", "a", " ", 
+     RowBox[{"second", ".", " ", "Cd"}], " ", "is", " ", "the", " ", "air", 
+     " ", "drag", " ", "coefficient"}], ",", " ", 
+    RowBox[{"\[Epsilon]", " ", "is", " ", "epsilon", " ", 
+     RowBox[{"naught", ".", " ", "h"}], " ", "is", " ", "the", " ", "height", 
+     " ", "of", " ", "the", " ", "fixed", " ", "point", " ", "of", " ", "the",
+      " ", "pendulum", " ", "above", " ", "the", " ", "plane", " ", "and", 
+     " ", "l", " ", "is", " ", "the", " ", "length", " ", "of", " ", "the", 
+     " ", 
+     RowBox[{"pendulum", ".", " ", "All"}], " ", "of", " ", "the", " ", 
+     "initial", " ", "conditions", " ", "can", " ", "be", " ", "changed", " ",
+      "by", " ", "the", " ", "bottom", " ", "four", " ", 
+     RowBox[{"options", ".", " ", "\[Theta]"}], " ", "is", " ", "the", " ", 
+     "polar", " ", "angle", " ", "and", " ", "\[Phi]", " ", "is", " ", "the", 
+     " ", 
+     RowBox[{"azimuthal", ".", " ", "Tmax"}], " ", "can", " ", "be", " ", 
+     "changed", " ", "right", " ", "away", " ", "at", " ", "the", " ", "top", 
+     " ", "of", " ", "the", " ", 
+     RowBox[{"notebook", ".", " ", "The"}], " ", "values", " ", "of", " ", 
+     "the", " ", "slider", " ", "paramaters", " ", "can", " ", "be", " ", 
+     "viewed", " ", "by", " ", "hitting", " ", "the", " ", "plus", " ", 
+     "next", " ", "to", " ", 
+     RowBox[{"them", ".", " ", "Cd"}], " ", "is", " ", "initially", " ", 
+     "set", " ", "to", " ", "0"}], ",", " ", 
+    RowBox[{
+    "but", " ", "to", " ", "see", " ", "the", " ", "pendulum", " ", 
+     "converge", " ", "on", " ", "a", " ", "charge", " ", "it", " ", "needs", 
+     " ", "to", " ", "be", " ", "non", " ", 
+     RowBox[{"zero", "."}]}]}], " ", "*)"}]}]], "Input",
+ CellChangeTimes->{{3.765857074705841*^9, 3.7658570747825823`*^9}, {
+  3.765857232344592*^9, 3.765857402561784*^9}, {3.765857461795106*^9, 
+  3.765857547893654*^9}, {3.765897422721631*^9, 3.7658976629621468`*^9}, {
+  3.76589776894011*^9, 3.765898033109145*^9}, {3.765898152374343*^9, 
+  3.765898336902172*^9}, {3.765898367854515*^9, 3.765898397586403*^9}, {
+  3.765898507772743*^9, 3.7658987379546967`*^9}, {3.765898773865615*^9, 
+  3.76589901458965*^9}},ExpressionUUID->"7980d8e6-7dac-4acc-ab78-\
+52c0d5908b5f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "sol", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"tmax", "=", "20"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"sol", "[", 
+     RowBox[{
+     "RedAzimuth_", ",", "GreenAzimuth_", ",", "BlueAzimuth_", ",", 
+      "RedPolar_", ",", "GreenPolar_", ",", "BluePolar_", ",", "QRed_", ",", 
+      "QGreen_", ",", "QBlue_", ",", "QBob_", ",", "h_", ",", "g_", ",", "l_",
+       ",", "\[Epsilon]_", ",", "m_", ",", "Cd_", ",", "\[Theta]0_", ",", 
+      "\[Theta]p0_", ",", "\[Phi]0_", ",", "\[Phi]p0_"}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"sol", "[", 
+      RowBox[{
+      "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", "RedPolar", 
+       ",", "GreenPolar", ",", "BluePolar", ",", "QRed", ",", "QGreen", ",", 
+       "QBlue", ",", "QBob", ",", "h", ",", "g", ",", "l", ",", "\[Epsilon]", 
+       ",", "m", ",", "Cd", ",", "\[Theta]0", ",", "\[Theta]p0", ",", 
+       "\[Phi]0", ",", "\[Phi]p0"}], "]"}], "=", 
+     RowBox[{"Flatten", "@", " ", 
+      RowBox[{"NDSolve", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Theta]", "''"}], "[", "t", "]"}], "\[Equal]", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"\[Phi]", "'"}], "[", "t", "]"}], "^", "2"}], "*", 
+               " ", 
+               RowBox[{"Cos", "[", 
+                RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+               RowBox[{"Sin", "[", 
+                RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}], 
+              "\[IndentingNewLine]", "-", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"g", "/", "l"}], ")"}], "*", 
+               RowBox[{"Sin", "[", 
+                RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}], 
+              "\[IndentingNewLine]", "\[IndentingNewLine]", "-", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"QBob", "*", "QRed"}], ")"}], "/", 
+                  RowBox[{"(", 
+                   RowBox[{
+                   "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*", 
+                    "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "RedPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "RedAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                RowBox[{"(", 
+                 RowBox[{"2", "*", "l", "*", 
+                  RowBox[{"(", 
+                   RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "RedPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "RedAzimuth"}], 
+                    "]"}]}], "-", 
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}]}], ")"}]}], 
+                 ")"}]}], ")"}], "\[IndentingNewLine]", "\[IndentingNewLine]",
+               "-", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"QBob", "*", "QGreen"}], ")"}], "/", 
+                  RowBox[{"(", 
+                   RowBox[{
+                   "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*", 
+                    "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                RowBox[{"(", 
+                 RowBox[{"2", "*", "l", "*", 
+                  RowBox[{"(", 
+                   RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "-", 
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}], 
+                 ")"}]}], ")"}], "\[IndentingNewLine]", "\[IndentingNewLine]",
+               "-", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"QBob", "*", "QBlue"}], ")"}], "/", 
+                  RowBox[{"(", 
+                   RowBox[{
+                   "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*", 
+                    "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "BluePolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "BlueAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                RowBox[{"(", 
+                 RowBox[{"2", "*", "l", "*", 
+                  RowBox[{"(", 
+                   RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "BluePolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "BlueAzimuth"}], 
+                    "]"}]}], "-", 
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}]}], ")"}]}], 
+                 ")"}]}], ")"}]}], ")"}], "-", 
+            RowBox[{"Cd", "*", 
+             RowBox[{
+              RowBox[{"\[Theta]", "'"}], "[", "t", "]"}]}]}]}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Phi]", "''"}], "[", "t", "]"}], "\[Equal]", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"QBob", "*", "QRed"}], ")"}], "/", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*",
+                     "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "RedPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "RedAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{"2", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "RedPolar", "]"}]}], ")"}], "*", "l", 
+                    "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "RedPolar", "]"}], "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "RedAzimuth"}], 
+                    "]"}]}], ")"}]}], ")"}], "\[IndentingNewLine]", 
+                "\[IndentingNewLine]", "-", 
+                RowBox[{"(", 
+                 RowBox[{"2", " ", 
+                  RowBox[{
+                   RowBox[{"\[Phi]", "'"}], "[", "t", "]"}], " ", 
+                  RowBox[{
+                   RowBox[{"\[Theta]", "'"}], "[", "t", "]"}], " ", "*", 
+                  RowBox[{"Sin", "[", 
+                   RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                  RowBox[{"Cos", "[", 
+                   RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}], ")"}], 
+                "\[IndentingNewLine]", "\[IndentingNewLine]", "+", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"QBob", "*", "QGreen"}], ")"}], "/", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*",
+                     "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{"2", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    "l", "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], ")"}]}], ")"}], "\[IndentingNewLine]", 
+                "\[IndentingNewLine]", "+", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"QBob", "*", "QBlue"}], ")"}], "/", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    "m", "*", "l", "*", "l", "*", "\[Epsilon]", "*", "8", "*",
+                     "Pi", "*", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "BluePolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "BlueAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}]}], ")"}]}]}], 
+                    ")"}], "^", 
+                    RowBox[{"(", 
+                    RowBox[{"3", "/", "2"}], ")"}]}]}], ")"}]}], ")"}], "*", 
+                  RowBox[{"(", 
+                   RowBox[{"2", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "BluePolar", "]"}]}], ")"}], "*", "l",
+                     "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "BluePolar", "]"}], "*", 
+                    RowBox[{"Sin", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "BlueAzimuth"}], 
+                    "]"}]}], ")"}]}], ")"}]}], ")"}], "/", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"Sin", "[", 
+                 RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                RowBox[{"Sin", "[", 
+                 RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}], ")"}]}], ")"}],
+             "-", 
+            RowBox[{"Cd", "*", 
+             RowBox[{
+              RowBox[{"\[Phi]", "'"}], "[", "t", "]"}]}]}]}], 
+          "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+          RowBox[{
+           RowBox[{"\[Theta]", "[", "0", "]"}], "\[Equal]", "\[Theta]0"}], 
+          ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Theta]", "'"}], "[", "0", "]"}], "\[Equal]", 
+           "\[Theta]p0"}], ",", 
+          RowBox[{
+           RowBox[{"\[Phi]", "[", "0", "]"}], "\[Equal]", "\[Phi]0"}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Phi]", "'"}], "[", "0", "]"}], "\[Equal]", 
+           "\[Phi]p0"}]}], "}"}], ",", " ", 
+        RowBox[{"{", 
+         RowBox[{"\[Theta]", ",", "\[Phi]"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+        RowBox[{"Method", "\[Rule]", "\"\<StiffnessSwitching\>\""}]}], 
+       "]"}]}]}]}], ";"}], " ", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x", "[", "t_", "]"}], ":=", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"Sin", "[", 
+     RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], " ", 
+    RowBox[{"Cos", "[", 
+     RowBox[{"\[Phi]", "[", "t", "]"}], "]"}]}], ")"}]}], "\n", 
+ RowBox[{
+  RowBox[{"y", "[", "t_", "]"}], ":=", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"Sin", "[", 
+     RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], " ", 
+    RowBox[{"Sin", "[", 
+     RowBox[{"\[Phi]", "[", "t", "]"}], "]"}]}], ")"}]}], "\n", 
+ RowBox[{
+  RowBox[{"z", "[", 
+   RowBox[{"t_", ",", "l_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"-", "l"}], "*", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Pos", "[", 
+   RowBox[{"t_", ",", "l_"}], "]"}], ":=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Sin", "[", 
+       RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", " ", 
+      RowBox[{"Cos", "[", 
+       RowBox[{"\[Phi]", "[", "t", "]"}], "]"}]}], ")"}], ",", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Sin", "[", 
+       RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], " ", "*", 
+      RowBox[{"Sin", "[", 
+       RowBox[{"\[Phi]", "[", "t", "]"}], "]"}]}], ")"}], ",", 
+    RowBox[{
+     RowBox[{"-", "l"}], "*", 
+     RowBox[{"Cos", "[", 
+      RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}]}], 
+   "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"Animate", "[", 
+    RowBox[{
+     RowBox[{"Row", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Show", "[", 
+         RowBox[{
+          RowBox[{"Graphics3D", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"PointSize", "[", "0.025", "]"}], ",", "Red", ",", 
+             RowBox[{"Point", "[", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "RedPolar", "]"}], "*", 
+                 RowBox[{"Cos", "[", "RedAzimuth", "]"}]}], ",", 
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "RedPolar", "]"}], "*", 
+                 RowBox[{"Sin", "[", "RedAzimuth", "]"}]}], ",", 
+                RowBox[{"-", "h"}]}], "}"}], "]"}]}], "}"}], "]"}], ",", 
+          RowBox[{"Graphics3D", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"PointSize", "[", "0.025", "]"}], ",", "Green", ",", 
+             RowBox[{"Point", "[", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "GreenPolar", "]"}], "*", 
+                 RowBox[{"Cos", "[", "GreenAzimuth", "]"}]}], ",", 
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "GreenPolar", "]"}], "*", 
+                 RowBox[{"Sin", "[", "GreenAzimuth", "]"}]}], ",", 
+                RowBox[{"-", "h"}]}], "}"}], "]"}]}], "}"}], "]"}], ",", 
+          RowBox[{"Graphics3D", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"PointSize", "[", "0.025", "]"}], ",", "Blue", ",", 
+             RowBox[{"Point", "[", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "BluePolar", "]"}], "*", 
+                 RowBox[{"Cos", "[", "BlueAzimuth", "]"}]}], ",", 
+                RowBox[{"h", "*", 
+                 RowBox[{"Tan", "[", "BluePolar", "]"}], "*", 
+                 RowBox[{"Sin", "[", "BlueAzimuth", "]"}]}], ",", 
+                RowBox[{"-", "h"}]}], "}"}], "]"}]}], "}"}], "]"}], ",", 
+          RowBox[{"Graphics3D", "[", 
+           RowBox[{"{", 
+            RowBox[{"Black", ",", " ", 
+             RowBox[{"PointSize", "[", ".03", "]"}], ",", 
+             RowBox[{"Point", "[", "  ", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0", ",", "0"}], "}"}], "]"}]}], "}"}], 
+           "]"}], ",", 
+          RowBox[{"ParametricPlot3D", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"x", "[", "t", "]"}], ",", 
+               RowBox[{"y", "[", "t", "]"}], ",", 
+               RowBox[{"z", "[", 
+                RowBox[{"t", ",", "l"}], "]"}]}], "}"}], "/.", 
+             RowBox[{"sol", "[", 
+              RowBox[{
+              "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+               "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", "QRed", 
+               ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h", ",", "g", 
+               ",", "l", ",", "\[Epsilon]", ",", "m", ",", "Cd", ",", 
+               "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", ",", 
+               "\[Phi]p0"}], "]"}]}], ",", 
+            RowBox[{"{", 
+             RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+            RowBox[{"AxesLabel", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"x", ",", "y", ",", "z"}], "}"}]}]}], "]"}], ",", 
+          RowBox[{"Graphics3D", "[", 
+           RowBox[{"{", 
+            RowBox[{"Red", ",", 
+             RowBox[{"PointSize", "[", ".03", "]"}], ",", 
+             RowBox[{"Point", "[", 
+              RowBox[{
+               RowBox[{"Pos", "[", 
+                RowBox[{"t", ",", "l"}], "]"}], "/.", " ", 
+               RowBox[{"sol", "[", 
+                RowBox[{
+                "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+                 "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", "QRed",
+                  ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h", ",", 
+                 "g", ",", "l", ",", "\[Epsilon]", ",", "m", ",", "Cd", ",", 
+                 "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", ",", 
+                 "\[Phi]p0"}], "]"}]}], "]"}], ",", "Black", ",", 
+             RowBox[{"Line", "[", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Pos", "[", 
+                  RowBox[{"t", ",", "l"}], "]"}], "/.", " ", 
+                 RowBox[{"sol", "[", 
+                  RowBox[{
+                  "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+                   "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", 
+                   "QRed", ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h",
+                    ",", "g", ",", "l", ",", "\[Epsilon]", ",", "m", ",", 
+                   "Cd", ",", "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", 
+                   ",", "\[Phi]p0"}], "]"}]}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], "]"}]}], 
+            "}"}], "]"}], ",", 
+          RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+          RowBox[{"AspectRatio", "\[Rule]", "Full"}], ",", 
+          RowBox[{"AxesLabel", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"\"\<x\>\"", ",", "\"\<y\>\"", ",", "\"\<z\>\""}], 
+            "}"}]}]}], "]"}], ",", 
+        RowBox[{"ParametricPlot", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"\[Theta]", "[", "t", "]"}], ",", 
+             RowBox[{
+              RowBox[{"\[Theta]", "'"}], "[", "t", "]"}]}], "}"}], "/.", 
+           RowBox[{"sol", "[", 
+            RowBox[{
+            "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+             "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", "QRed", 
+             ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h", ",", "g", 
+             ",", "l", ",", "\[Epsilon]", ",", "m", ",", "Cd", ",", 
+             "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", ",", 
+             "\[Phi]p0"}], "]"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+          RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+          RowBox[{"AspectRatio", "\[Rule]", "Full"}], ",", 
+          RowBox[{"AxesLabel", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"\[Theta]", ",", 
+             RowBox[{"\[Theta]", "'"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"ParametricPlot", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"\[Phi]", "[", "t", "]"}], ",", 
+             RowBox[{
+              RowBox[{"\[Phi]", "'"}], "[", "t", "]"}]}], "}"}], "/.", 
+           RowBox[{"sol", "[", 
+            RowBox[{
+            "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+             "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", "QRed", 
+             ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h", ",", "g", 
+             ",", "l", ",", "\[Epsilon]", ",", "m", ",", "Cd", ",", 
+             "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", ",", 
+             "\[Phi]p0"}], "]"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+          RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+          RowBox[{"AspectRatio", "\[Rule]", "Full"}], ",", 
+          RowBox[{"AxesLabel", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"\[Phi]", ",", 
+             RowBox[{"\[Phi]", "'"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Plot", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"m", "*", 
+                 RowBox[{"l", "^", "2"}]}], ")"}], "/", "2"}], ")"}], "*", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"\[Theta]", "'"}], "[", "t", "]"}], "^", "2"}], 
+                ")"}], "+", 
+               RowBox[{
+                RowBox[{"Sin", "[", 
+                 RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"\[Phi]", "'"}], "[", "t", "]"}], "^", "2"}]}]}], 
+              ")"}]}], "-", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"-", "m"}], "*", "g", "*", "l", "*", 
+               RowBox[{"Cos", "[", 
+                RowBox[{"\[Theta]", "[", "t", "]"}], "]"}]}], "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"QBob", "*", "QRed"}], ")"}], "/", 
+               RowBox[{"(", 
+                RowBox[{"4", "*", "Pi", "*", "\[Epsilon]", "*", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}]}], 
+                   ")"}], "^", 
+                  RowBox[{"(", 
+                   RowBox[{"1", "/", "2"}], ")"}]}]}], ")"}]}], "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"QBob", "*", "QBlue"}], ")"}], "/", 
+               RowBox[{"(", 
+                RowBox[{"4", "*", "Pi", "*", "\[Epsilon]", "*", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}]}], 
+                   ")"}], "^", 
+                  RowBox[{"(", 
+                   RowBox[{"1", "/", "2"}], ")"}]}]}], ")"}]}], "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"QBob", "*", "QGreen"}], ")"}], "/", 
+               RowBox[{"(", 
+                RowBox[{"4", "*", "Pi", "*", "\[Epsilon]", "*", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"l", "^", "2"}], "+", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "^", 
+                    "2"}], "-", 
+                    RowBox[{"2", "*", "l", "*", 
+                    RowBox[{"(", 
+                    RowBox[{"h", "/", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}], ")"}], "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Sin", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Sin", "[", "GreenPolar", "]"}], "*", 
+                    RowBox[{"Cos", "[", 
+                    RowBox[{
+                    RowBox[{"\[Phi]", "[", "t", "]"}], "-", "GreenAzimuth"}], 
+                    "]"}]}], "+", 
+                    RowBox[{
+                    RowBox[{"Cos", "[", 
+                    RowBox[{"\[Theta]", "[", "t", "]"}], "]"}], "*", 
+                    RowBox[{"Cos", "[", "GreenPolar", "]"}]}]}], ")"}]}]}], 
+                   ")"}], "^", 
+                  RowBox[{"(", 
+                   RowBox[{"1", "/", "2"}], ")"}]}]}], ")"}]}]}], ")"}]}], "/.",
+            " ", 
+           RowBox[{"sol", "[", 
+            RowBox[{
+            "RedAzimuth", ",", "GreenAzimuth", ",", "BlueAzimuth", ",", 
+             "RedPolar", ",", "GreenPolar", ",", "BluePolar", ",", "QRed", 
+             ",", "QGreen", ",", "QBlue", ",", "QBob", ",", "h", ",", "g", 
+             ",", "l", ",", "\[Epsilon]", ",", "m", ",", "Cd", ",", 
+             "\[Theta]0", ",", "\[Theta]p0", ",", "\[Phi]0", ",", 
+             "\[Phi]p0"}], "]"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+          RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+          RowBox[{"AspectRatio", "\[Rule]", "Full"}], ",", 
+          RowBox[{"AxesLabel", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"\"\<t\>\"", ",", "\"\<Total_Energy\>\""}], "}"}]}]}], 
+         "]"}]}], "}"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"t", ",", "0", ",", "tmax"}], "}"}], ",", 
+     RowBox[{"AnimationRate", "\[Rule]", ".1"}], ",", 
+     RowBox[{"AnimationRunning", "\[Rule]", "False"}]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"RedAzimuth", ",", "0", ",", 
+     RowBox[{"2", "*", "Pi"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"GreenAzimuth", ",", "0", ",", 
+     RowBox[{"2", "*", "Pi"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"BlueAzimuth", ",", "0", ",", 
+     RowBox[{"2", "*", "Pi"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"RedPolar", ",", 
+     RowBox[{
+      RowBox[{"-", "Pi"}], "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"GreenPolar", ",", 
+     RowBox[{
+      RowBox[{"-", "Pi"}], "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"BluePolar", ",", 
+     RowBox[{
+      RowBox[{"-", "Pi"}], "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "4"}], ",", 
+     RowBox[{"Pi", "/", "20"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"QBob", ",", "10", ",", 
+     RowBox[{"-", "10"}], ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"QRed", ",", 
+     RowBox[{"-", "10"}], ",", "10", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"QGreen", ",", 
+     RowBox[{"-", "10"}], ",", "10", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"QBlue", ",", 
+     RowBox[{"-", "10"}], ",", "10", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"h", ",", "1.2", ",", "2", ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"g", ",", "9.81", ",", "0", ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"l", ",", "1", ",", "2", ",", ".1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Epsilon]", ",", 
+     RowBox[{
+      RowBox[{"1", "E"}], "-", "2"}], ",", 
+     RowBox[{
+      RowBox[{"1", "E"}], "-", "4"}], ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"m", ",", "1", ",", "10", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"Cd", ",", "0.1", ",", "3", ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Theta]0", ",", 
+     RowBox[{
+      RowBox[{"-", "Pi"}], "/", "3"}], ",", 
+     RowBox[{"Pi", "/", "3"}], ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Theta]p0", ",", 
+     RowBox[{"-", "10"}], ",", "10", ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Phi]0", ",", 
+     RowBox[{
+      RowBox[{"-", "Pi"}], "/", "3"}], ",", 
+     RowBox[{"Pi", "/", "3"}], ",", "0.1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\[Phi]p0", ",", 
+     RowBox[{"-", "10"}], ",", "10", ",", "0.1"}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.765856410152232*^9, 3.76585651975467*^9}, {
+   3.7658565543022203`*^9, 3.76585674785857*^9}, {3.76585677791558*^9, 
+   3.765856794708373*^9}, {3.765896691999332*^9, 3.765896704133999*^9}, {
+   3.7658970065474873`*^9, 3.7658970176933203`*^9}, {3.765897082622119*^9, 
+   3.765897091890381*^9}, {3.765897122525999*^9, 3.765897137880097*^9}, {
+   3.76589727329562*^9, 3.765897315163138*^9}, {3.7658973677293873`*^9, 
+   3.765897371019751*^9}, 3.765898372980816*^9, {3.7658984082256603`*^9, 
+   3.7658984085946693`*^9}, {3.765898501863573*^9, 3.765898502434407*^9}, 
+   3.765898711841463*^9},
+ CellLabel->"In[51]:=",ExpressionUUID->"ef46837a-5c95-4162-97d5-abf027657b14"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`BlueAzimuth$$ = 
+    0, $CellContext`BluePolar$$ = Rational[-1, 4] Pi, $CellContext`Cd$$ = 
+    1.2000000000000002`, $CellContext`g$$ = 
+    9.81, $CellContext`GreenAzimuth$$ = 0, $CellContext`GreenPolar$$ = 
+    Rational[-1, 4] Pi, $CellContext`h$$ = 1.2, $CellContext`l$$ = 
+    1, $CellContext`m$$ = 1, $CellContext`QBlue$$ = -10, $CellContext`QBob$$ =
+     10, $CellContext`QGreen$$ = -10, $CellContext`QRed$$ = -10, \
+$CellContext`RedAzimuth$$ = 0, $CellContext`RedPolar$$ = Rational[-1, 4] 
+    Pi, $CellContext`\[Epsilon]$$ = -2 + E, $CellContext`\[Theta]0$$ = 
+    Rational[-1, 3] 
+    Pi, $CellContext`\[Theta]p0$$ = -10, $CellContext`\[Phi]0$$ = 
+    Rational[-1, 3] Pi, $CellContext`\[Phi]p0$$ = -10, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{
+      Hold[$CellContext`RedAzimuth$$], 0, 2 Pi, Rational[1, 20] Pi}, {
+      Hold[$CellContext`GreenAzimuth$$], 0, 2 Pi, Rational[1, 20] Pi}, {
+      Hold[$CellContext`BlueAzimuth$$], 0, 2 Pi, Rational[1, 20] Pi}, {
+      Hold[$CellContext`RedPolar$$], Rational[-1, 4] Pi, Rational[1, 4] Pi, 
+      Rational[1, 20] Pi}, {
+      Hold[$CellContext`GreenPolar$$], Rational[-1, 4] Pi, Rational[1, 4] Pi, 
+      Rational[1, 20] Pi}, {
+      Hold[$CellContext`BluePolar$$], Rational[-1, 4] Pi, Rational[1, 4] Pi, 
+      Rational[1, 20] Pi}, {
+      Hold[$CellContext`QBob$$], 10, -10, 1}, {
+      Hold[$CellContext`QRed$$], -10, 10, 1}, {
+      Hold[$CellContext`QGreen$$], -10, 10, 1}, {
+      Hold[$CellContext`QBlue$$], -10, 10, 1}, {
+      Hold[$CellContext`h$$], 1.2, 2, 0.1}, {
+      Hold[$CellContext`g$$], 9.81, 0, 0.1}, {
+      Hold[$CellContext`l$$], 1, 2, 0.1}, {
+      Hold[$CellContext`\[Epsilon]$$], -2 + E, -4 + E, 0.1}, {
+      Hold[$CellContext`m$$], 1, 10, 1}, {
+      Hold[$CellContext`Cd$$], 0.1, 3, 0.1}, {
+      Hold[$CellContext`\[Theta]0$$], Rational[-1, 3] Pi, Rational[1, 3] Pi, 
+      0.1}, {
+      Hold[$CellContext`\[Theta]p0$$], -10, 10, 0.1}, {
+      Hold[$CellContext`\[Phi]0$$], Rational[-1, 3] Pi, Rational[1, 3] Pi, 
+      0.1}, {
+      Hold[$CellContext`\[Phi]p0$$], -10, 10, 0.1}}, Typeset`size$$ = {
+    1485., {948., 954.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`RedAzimuth$34230$$ = 
+    0, $CellContext`GreenAzimuth$34231$$ = 
+    0, $CellContext`BlueAzimuth$34232$$ = 0, $CellContext`RedPolar$34233$$ = 
+    0, $CellContext`GreenPolar$34234$$ = 0, $CellContext`BluePolar$34235$$ = 
+    0, $CellContext`QBob$34236$$ = 0, $CellContext`QRed$34237$$ = 
+    0, $CellContext`QGreen$34238$$ = 0, $CellContext`QBlue$34239$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`BlueAzimuth$$ = 
+        0, $CellContext`BluePolar$$ = Rational[-1, 4] Pi, $CellContext`Cd$$ = 
+        0.1, $CellContext`g$$ = 9.81, $CellContext`GreenAzimuth$$ = 
+        0, $CellContext`GreenPolar$$ = Rational[-1, 4] Pi, $CellContext`h$$ = 
+        1.2, $CellContext`l$$ = 1, $CellContext`m$$ = 
+        1, $CellContext`QBlue$$ = -10, $CellContext`QBob$$ = 
+        10, $CellContext`QGreen$$ = -10, $CellContext`QRed$$ = -10, \
+$CellContext`RedAzimuth$$ = 0, $CellContext`RedPolar$$ = 
+        Rational[-1, 4] Pi, $CellContext`\[Epsilon]$$ = -2 + 
+         E, $CellContext`\[Theta]0$$ = 
+        Rational[-1, 3] 
+         Pi, $CellContext`\[Theta]p0$$ = -10, $CellContext`\[Phi]0$$ = 
+        Rational[-1, 3] Pi, $CellContext`\[Phi]p0$$ = -10}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`RedAzimuth$$, $CellContext`RedAzimuth$34230$$, 0], 
+        Hold[$CellContext`GreenAzimuth$$, $CellContext`GreenAzimuth$34231$$, 
+         0], 
+        Hold[$CellContext`BlueAzimuth$$, $CellContext`BlueAzimuth$34232$$, 0], 
+        Hold[$CellContext`RedPolar$$, $CellContext`RedPolar$34233$$, 0], 
+        Hold[$CellContext`GreenPolar$$, $CellContext`GreenPolar$34234$$, 0], 
+        Hold[$CellContext`BluePolar$$, $CellContext`BluePolar$34235$$, 0], 
+        Hold[$CellContext`QBob$$, $CellContext`QBob$34236$$, 0], 
+        Hold[$CellContext`QRed$$, $CellContext`QRed$34237$$, 0], 
+        Hold[$CellContext`QGreen$$, $CellContext`QGreen$34238$$, 0], 
+        Hold[$CellContext`QBlue$$, $CellContext`QBlue$34239$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> Animate[
+        Row[{
+          Show[
+           Graphics3D[{
+             PointSize[0.025], Red, 
+             
+             Point[{$CellContext`h$$ Tan[$CellContext`RedPolar$$] 
+               Cos[$CellContext`RedAzimuth$$], $CellContext`h$$ 
+               Tan[$CellContext`RedPolar$$] 
+               Sin[$CellContext`RedAzimuth$$], -$CellContext`h$$}]}], 
+           Graphics3D[{
+             PointSize[0.025], Green, 
+             
+             Point[{$CellContext`h$$ Tan[$CellContext`GreenPolar$$] 
+               Cos[$CellContext`GreenAzimuth$$], $CellContext`h$$ 
+               Tan[$CellContext`GreenPolar$$] 
+               Sin[$CellContext`GreenAzimuth$$], -$CellContext`h$$}]}], 
+           Graphics3D[{
+             PointSize[0.025], Blue, 
+             
+             Point[{$CellContext`h$$ Tan[$CellContext`BluePolar$$] 
+               Cos[$CellContext`BlueAzimuth$$], $CellContext`h$$ 
+               Tan[$CellContext`BluePolar$$] 
+               Sin[$CellContext`BlueAzimuth$$], -$CellContext`h$$}]}], 
+           Graphics3D[{Black, 
+             PointSize[0.03], 
+             Point[{0, 0, 0}]}], 
+           ParametricPlot3D[
+            ReplaceAll[{
+              $CellContext`x[$CellContext`t], 
+              $CellContext`y[$CellContext`t], 
+              $CellContext`z[$CellContext`t, $CellContext`l$$]}, 
+             $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]], {$CellContext`t, 0, $CellContext`tmax}, 
+            AxesLabel -> {$CellContext`x, $CellContext`y, $CellContext`z}], 
+           Graphics3D[{Red, 
+             PointSize[0.03], 
+             Point[
+              ReplaceAll[
+               $CellContext`Pos[$CellContext`t, $CellContext`l$$], 
+               $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]]], Black, 
+             Line[{
+               ReplaceAll[
+                $CellContext`Pos[$CellContext`t, $CellContext`l$$], 
+                $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]], {0, 0, 0}}]}], ImageSize -> Medium, AspectRatio -> Full, 
+           AxesLabel -> {"x", "y", "z"}], 
+          ParametricPlot[
+           ReplaceAll[{
+             $CellContext`\[Theta][$CellContext`t], 
+             Derivative[1][$CellContext`\[Theta]][$CellContext`t]}, 
+            $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]], {$CellContext`t, 0, $CellContext`tmax}, ImageSize -> Medium, 
+           AspectRatio -> Full, AxesLabel -> {$CellContext`\[Theta], 
+             Derivative[1][$CellContext`\[Theta]]}], 
+          ParametricPlot[
+           ReplaceAll[{
+             $CellContext`\[Phi][$CellContext`t], 
+             Derivative[1][$CellContext`\[Phi]][$CellContext`t]}, 
+            $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]], {$CellContext`t, 0, $CellContext`tmax}, ImageSize -> Medium, 
+           AspectRatio -> Full, AxesLabel -> {$CellContext`\[Phi], 
+             Derivative[1][$CellContext`\[Phi]]}], 
+          Plot[
+           
+           ReplaceAll[(($CellContext`m$$ $CellContext`l$$^2)/2) (
+              Derivative[1][$CellContext`\[Theta]][$CellContext`t]^2 + Sin[
+                 $CellContext`\[Theta][$CellContext`t]] 
+               Derivative[
+                 1][$CellContext`\[Phi]][$CellContext`t]^2) - \
+((-$CellContext`m$$) $CellContext`g$$ $CellContext`l$$ Cos[
+               $CellContext`\[Theta][$CellContext`t]] + ($CellContext`QBob$$ \
+$CellContext`QRed$$)/(4 
+             Pi $CellContext`\[Epsilon]$$ ($CellContext`l$$^2 + \
+($CellContext`h$$/Cos[$CellContext`GreenPolar$$])^2 - 
+               2 $CellContext`l$$ ($CellContext`h$$/
+                Cos[$CellContext`GreenPolar$$]) (Sin[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Sin[$CellContext`GreenPolar$$] 
+                 Cos[$CellContext`\[Phi][$CellContext`t] - \
+$CellContext`GreenAzimuth$$] + Cos[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Cos[$CellContext`GreenPolar$$]))^(1/
+               2)) + ($CellContext`QBob$$ $CellContext`QBlue$$)/(4 
+             Pi $CellContext`\[Epsilon]$$ ($CellContext`l$$^2 + \
+($CellContext`h$$/Cos[$CellContext`GreenPolar$$])^2 - 
+               2 $CellContext`l$$ ($CellContext`h$$/
+                Cos[$CellContext`GreenPolar$$]) (Sin[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Sin[$CellContext`GreenPolar$$] 
+                 Cos[$CellContext`\[Phi][$CellContext`t] - \
+$CellContext`GreenAzimuth$$] + Cos[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Cos[$CellContext`GreenPolar$$]))^(1/
+               2)) + ($CellContext`QBob$$ $CellContext`QGreen$$)/(4 
+             Pi $CellContext`\[Epsilon]$$ ($CellContext`l$$^2 + \
+($CellContext`h$$/Cos[$CellContext`GreenPolar$$])^2 - 
+               2 $CellContext`l$$ ($CellContext`h$$/
+                Cos[$CellContext`GreenPolar$$]) (Sin[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Sin[$CellContext`GreenPolar$$] 
+                 Cos[$CellContext`\[Phi][$CellContext`t] - \
+$CellContext`GreenAzimuth$$] + Cos[
+                   $CellContext`\[Theta][$CellContext`t]] 
+                 Cos[$CellContext`GreenPolar$$]))^(1/2))), 
+            $CellContext`sol[$CellContext`RedAzimuth$$, \
+$CellContext`GreenAzimuth$$, $CellContext`BlueAzimuth$$, \
+$CellContext`RedPolar$$, $CellContext`GreenPolar$$, $CellContext`BluePolar$$, \
+$CellContext`QRed$$, $CellContext`QGreen$$, $CellContext`QBlue$$, \
+$CellContext`QBob$$, $CellContext`h$$, $CellContext`g$$, $CellContext`l$$, \
+$CellContext`\[Epsilon]$$, $CellContext`m$$, $CellContext`Cd$$, $CellContext`\
+\[Theta]0$$, $CellContext`\[Theta]p0$$, $CellContext`\[Phi]0$$, $CellContext`\
+\[Phi]p0$$]], {$CellContext`t, 0, $CellContext`tmax}, ImageSize -> Medium, 
+           AspectRatio -> Full, 
+           AxesLabel -> {"t", "Total_Energy"}]}], {$CellContext`t, 
+         0, $CellContext`tmax}, AnimationRate -> 0.1, AnimationRunning -> 
+        False], "Specifications" :> {{$CellContext`RedAzimuth$$, 0, 2 Pi, 
+         Rational[1, 20] Pi}, {$CellContext`GreenAzimuth$$, 0, 2 Pi, 
+         Rational[1, 20] Pi}, {$CellContext`BlueAzimuth$$, 0, 2 Pi, 
+         Rational[1, 20] Pi}, {$CellContext`RedPolar$$, Rational[-1, 4] Pi, 
+         Rational[1, 4] Pi, Rational[1, 20] Pi}, {$CellContext`GreenPolar$$, 
+         Rational[-1, 4] Pi, Rational[1, 4] Pi, Rational[1, 20] 
+         Pi}, {$CellContext`BluePolar$$, Rational[-1, 4] Pi, Rational[1, 4] 
+         Pi, Rational[1, 20] Pi}, {$CellContext`QBob$$, 10, -10, 
+         1}, {$CellContext`QRed$$, -10, 10, 1}, {$CellContext`QGreen$$, -10, 
+         10, 1}, {$CellContext`QBlue$$, -10, 10, 1}, {$CellContext`h$$, 1.2, 
+         2, 0.1}, {$CellContext`g$$, 9.81, 0, 0.1}, {$CellContext`l$$, 1, 2, 
+         0.1}, {$CellContext`\[Epsilon]$$, -2 + E, -4 + E, 
+         0.1}, {$CellContext`m$$, 1, 10, 1}, {$CellContext`Cd$$, 0.1, 3, 
+         0.1}, {$CellContext`\[Theta]0$$, Rational[-1, 3] Pi, Rational[1, 3] 
+         Pi, 0.1}, {$CellContext`\[Theta]p0$$, -10, 10, 
+         0.1}, {$CellContext`\[Phi]0$$, Rational[-1, 3] Pi, Rational[1, 3] Pi,
+          0.1}, {$CellContext`\[Phi]p0$$, -10, 10, 0.1}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{1810., {978., 984.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7658567170435753`*^9, 3.765856755035615*^9, 3.7658568010196953`*^9, {
+   3.765857092645287*^9, 3.765857114739224*^9}, {3.765896631025714*^9, 
+   3.765896707419332*^9}, {3.7658967859877377`*^9, 3.765896806968501*^9}, 
+   3.765896859996376*^9, {3.765896893226783*^9, 3.76589696994471*^9}, {
+   3.765897025524851*^9, 3.765897073019184*^9}, 3.7658971083198442`*^9, 
+   3.765897316939817*^9, 3.765897402849008*^9, 3.765898375054068*^9, 
+   3.765898412115803*^9, 3.765898712892261*^9},
+ CellLabel->"Out[58]=",ExpressionUUID->"ca4c5975-e5cc-4d9a-8270-4338044984ea"]
+}, Open  ]],
+
+Cell[BoxData["\[AliasDelimiter]"], "Input",
+ CellChangeTimes->{
+  3.765896712174383*^9},ExpressionUUID->"d35a4404-c765-4319-aa9d-\
+31d80c82ff59"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{282, Automatic}, {Automatic, 33}},
+CellContext->Notebook,
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 11861, 218, 1249, "Input",ExpressionUUID->"7980d8e6-7dac-4acc-ab78-52c0d5908b5f"],
+Cell[CellGroupData[{
+Cell[12444, 242, 38813, 900, 2551, "Input",ExpressionUUID->"ef46837a-5c95-4162-97d5-abf027657b14"],
+Cell[51260, 1144, 15139, 265, 2015, "Output",ExpressionUUID->"ca4c5975-e5cc-4d9a-8270-4338044984ea"]
+}, Open  ]],
+Cell[66414, 1412, 145, 3, 30, "Input",ExpressionUUID->"d35a4404-c765-4319-aa9d-31d80c82ff59"]
+}
+]
+*)
+
